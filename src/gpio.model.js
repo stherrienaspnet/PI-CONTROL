@@ -59,3 +59,4 @@ ColorType.UNACTIVE_COLOR = '#2196F3';
 ColorType.ENERGIZE_COLOR = 'lime';
 ColorType.UNENERGIZE_COLOR = '#FFF';
 exports.ColorType = ColorType;
+//# sourceMappingURL=gpio.model.js.map

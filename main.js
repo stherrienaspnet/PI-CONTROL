@@ -6,3 +6,4 @@ var connectPromise = controlService.connect();
 connectPromise.then(function (response) {
     console.log('control connected!');
 });
+//# sourceMappingURL=main.js.map
