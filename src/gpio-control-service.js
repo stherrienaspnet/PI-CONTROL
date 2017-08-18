@@ -14,6 +14,7 @@ var MQTT = require("mqtt");
 var Promise = require("bluebird");
 var events_1 = require("events");
 var gpio_model_1 = require("./gpio.model");
+var rpio = require('rpio');
 var GPIOControlService = (function (_super) {
     __extends(GPIOControlService, _super);
     function GPIOControlService() {
@@ -33,9 +34,9 @@ var GPIOControlService = (function (_super) {
             if (topicUrl != topicFilter)
                 return;
             var command = message.toString();
+            _this.execute(command);
             _this.ackCommand(command);
         };
-        _this.onClose = function () { };
         _this.subscribeCallback = function () {
             _this.subscribeResolve(true);
         };
@@ -44,7 +45,6 @@ var GPIOControlService = (function (_super) {
     GPIOControlService.prototype.addEventListeners = function () {
         this.client.addListener('connect', this.onConnect);
         this.client.addListener('message', this.onMessage);
-        this.client.addListener('close', this.onClose);
     };
     GPIOControlService.prototype.removeEventListeners = function () {
         this.client.removeAllListeners('connect');
@@ -53,6 +53,58 @@ var GPIOControlService = (function (_super) {
     };
     GPIOControlService.prototype.getBaseTopicUrl = function () {
         return "pi-robot/" + this.deviceId + "/control/";
+    };
+    GPIOControlService.prototype.reset = function () {
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_FORWARD, rpio.LOW);
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_REVERSE, rpio.LOW);
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_FORWARD, rpio.LOW);
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_REVERSE, rpio.LOW);
+    };
+    GPIOControlService.prototype.moveLeft = function () {
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_FORWARD, rpio.HIGH);
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_REVERSE, rpio.HIGH);
+    };
+    GPIOControlService.prototype.moveRight = function () {
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_FORWARD, rpio.HIGH);
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_REVERSE, rpio.HIGH);
+    };
+    GPIOControlService.prototype.moveFormard = function () {
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_FORWARD, rpio.HIGH);
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_FORWARD, rpio.HIGH);
+    };
+    GPIOControlService.prototype.moveReverse = function () {
+        rpio.write(gpio_model_1.MotorGPIO.LEFT_REVERSE, rpio.HIGH);
+        rpio.write(gpio_model_1.MotorGPIO.RIGHT_REVERSE, rpio.HIGH);
+    };
+    GPIOControlService.prototype.execute = function (command) {
+        this.reset();
+        switch (command) {
+            case gpio_model_1.ActionType.MOVE_LEFT:
+                this.moveLeft();
+                break;
+            case gpio_model_1.ActionType.MOVE_RIGHT:
+                this.moveRight();
+                break;
+            case gpio_model_1.ActionType.MOVE_FORWARD:
+                this.moveFormard();
+                break;
+            case gpio_model_1.ActionType.MOVE_REVERSE:
+                this.moveReverse();
+                break;
+            default:
+                break;
+        }
+    };
+    GPIOControlService.prototype.configurePort = function () {
+        var options = {
+            gpiomem: true,
+            mapping: 'physical',
+        };
+        rpio.init(options);
+        rpio.open(gpio_model_1.MotorGPIO.LEFT_FORWARD, rpio.OUTPUT, rpio.LOW);
+        rpio.open(gpio_model_1.MotorGPIO.LEFT_REVERSE, rpio.OUTPUT, rpio.LOW);
+        rpio.open(gpio_model_1.MotorGPIO.RIGHT_FORWARD, rpio.OUTPUT, rpio.LOW);
+        rpio.open(gpio_model_1.MotorGPIO.RIGHT_REVERSE, rpio.OUTPUT, rpio.LOW);
     };
     GPIOControlService.prototype.subscribe = function (topicUrl) {
         var _this = this;
@@ -67,13 +119,6 @@ var GPIOControlService = (function (_super) {
             _this.client = MQTT.connect(_this.SERVER_URL);
             _this.connectResolve = resolve;
             _this.addEventListeners();
-        });
-    };
-    GPIOControlService.prototype.unlinkDevice = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            _this.client.end();
-            resolve(true);
         });
     };
     GPIOControlService.prototype.ackCommand = function (command) {

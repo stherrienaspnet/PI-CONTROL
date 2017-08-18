@@ -59,4 +59,14 @@ ColorType.UNACTIVE_COLOR = '#2196F3';
 ColorType.ENERGIZE_COLOR = 'lime';
 ColorType.UNENERGIZE_COLOR = '#FFF';
 exports.ColorType = ColorType;
+var MotorGPIO = (function () {
+    function MotorGPIO() {
+    }
+    return MotorGPIO;
+}());
+MotorGPIO.LEFT_FORWARD = 13;
+MotorGPIO.LEFT_REVERSE = 15;
+MotorGPIO.RIGHT_FORWARD = 16;
+MotorGPIO.RIGHT_REVERSE = 18;
+exports.MotorGPIO = MotorGPIO;
 //# sourceMappingURL=gpio.model.js.map

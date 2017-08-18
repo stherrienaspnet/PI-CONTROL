@@ -53,6 +53,13 @@ export class ColorType{
   static readonly UNENERGIZE_COLOR: string = '#FFF';
 }
 
+export class MotorGPIO{
+    static readonly LEFT_FORWARD: number = 13;
+    static readonly LEFT_REVERSE: number = 15;
+    static readonly RIGHT_FORWARD: number = 16;
+    static readonly RIGHT_REVERSE: number = 18;
+}
+
 export interface GPIOServicable {
   linkDevice(deviceId: string): Promise<boolean>;
 
