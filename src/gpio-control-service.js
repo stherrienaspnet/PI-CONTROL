@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var MQTT = require("mqtt");
 var Promise = require("bluebird");
 var events_1 = require("events");
-var gpio_model_1 = require("../../PI-ROBOT/src/app/gpio.model");
+var gpio_model_1 = require("./gpio.model");
 var GPIOControlService = (function (_super) {
     __extends(GPIOControlService, _super);
     function GPIOControlService() {

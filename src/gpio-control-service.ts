@@ -1,7 +1,7 @@
 import * as MQTT from 'mqtt';
 import * as Promise from 'bluebird';
 import {EventEmitter} from 'events';
-import {MessageType} from '../../PI-ROBOT/src/app/gpio.model'
+import {MessageType} from "./gpio.model";
 
 export class GPIOControlService extends EventEmitter {
     private readonly SERVER_URL: string = 'mqtt://iot.eclipse.org:1883';
