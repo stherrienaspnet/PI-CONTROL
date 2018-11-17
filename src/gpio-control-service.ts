@@ -17,7 +17,11 @@ export class GPIOControlService extends EventEmitter {
     private subscribeResolve: (...args: any[]) => void;
     private publishResolve: (...args: any[]) => void;
 
-
+    constructor(){
+        super();
+        this.configurePort();
+    }
+    
     private addEventListeners(): void {
         this.client.addListener('connect', this.onConnect);
         this.client.addListener('message', this.onMessage);
